@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cloudservice
+    username: khrapatiymv
+    password: R0t4@dm1n
+  flyway:
+    baseline-on-migrate: true
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+server:
+  port: 8080
+  tomcat:
+    max-http-form-post-size: 10MB
+jwt:
+  secret: daf66e01593f61a15b857cf433aae03a005812b31234e149036bcc8dee755dbb
+  expirationMs: 86400000
+logging:
+  level:
+    root: error
+    org.springframework: error
+    org.hibernate: error
+    pl.chrapatij.backend: debug
