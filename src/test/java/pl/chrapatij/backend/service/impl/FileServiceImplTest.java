@@ -86,7 +86,7 @@ class FileServiceImplTest {
         given(fileRepository.findByHashAndUserIdAndIsDeleted(HASH, 1L, false)).willReturn(Optional.empty());
         MultipartFile body = new MockMultipartFile(FILENAME, TEXT.getBytes());
 
-        assertEquals(file.getName(), fileService.fileUpload(token, FILENAME, body).getName());
+        assertEquals(file.getName(), fileService.fileUpload(token, FILENAME, body, HASH).getName());
     }
 
     @Test
@@ -97,7 +97,7 @@ class FileServiceImplTest {
         given(fileRepository.findByNameAndUserIdAndIsDeleted(FILENAME, 1L, false)).willReturn(Optional.of(file));
         MultipartFile body = new MockMultipartFile(FILENAME, TEXT.getBytes());
 
-        assertThrows(userExceptionError400.class, () -> fileService.fileUpload(token, FILENAME, body));
+        assertThrows(userExceptionError400.class, () -> fileService.fileUpload(token, FILENAME, body, HASH));
     }
 
     @Test
@@ -109,7 +109,7 @@ class FileServiceImplTest {
         given(fileRepository.findByHashAndUserIdAndIsDeleted(HASH, 1L, false)).willReturn(Optional.of(file));
         MultipartFile body = new MockMultipartFile(FILENAME, TEXT.getBytes());
 
-        assertThrows(userExceptionError400.class, () -> fileService.fileUpload(token, FILENAME, body));
+        assertThrows(userExceptionError400.class, () -> fileService.fileUpload(token, FILENAME, body, HASH));
     }
 
     @Test

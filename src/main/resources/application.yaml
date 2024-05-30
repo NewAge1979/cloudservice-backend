@@ -11,10 +11,12 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 server:
   port: 8080
-  tomcat:
-    max-http-form-post-size: 10MB
 jwt:
   secret: daf66e01593f61a15b857cf433aae03a005812b31234e149036bcc8dee755dbb
   expirationMs: 86400000
@@ -23,4 +25,4 @@ logging:
     root: error
     org.springframework: error
     org.hibernate: error
-    pl.chrapatij.backend: debug
+    pl.chrapatij.backend: error

@@ -23,10 +23,11 @@ public class FileController {
     @GetMapping("/list")
     ResponseEntity<List<FileListDto>> getFileList(
             @RequestHeader(name = "auth-token") String token,
-            @RequestParam(required = false) int limit
+            @RequestParam(required = false) Integer limit
     ) {
         log.info("*".repeat(250));
         log.info("Endpoint: cloud/list. Method: GET.");
+
         return ResponseEntity.ok(fileService.getFileList(token, limit));
     }
 
@@ -34,12 +35,13 @@ public class FileController {
     ResponseEntity<Void> fileUpload(
             @RequestHeader(name = "auth-token") String token,
             @RequestParam(required = false) String filename,
-            @RequestBody MultipartFile file
+            @RequestBody MultipartFile file,
+            @RequestBody(required = false) String hash
     ) {
         log.info("*".repeat(250));
         log.info("Endpoint: cloud/file. Method: POST.");
         log.debug("Filename for upload: '{}'", filename);
-        fileService.fileUpload(token, filename, file);
+        fileService.fileUpload(token, filename, file, hash);
         return ResponseEntity.ok().build();
     }
 

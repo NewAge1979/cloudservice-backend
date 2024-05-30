@@ -23,6 +23,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +36,10 @@ public class FileServiceImpl implements FileService {
     private final FileDownloadMapper fileDownloadMapper;
 
     @Override
-    public List<FileListDto> getFileList(String token, int limit) {
+    public List<FileListDto> getFileList(String token, Integer limit) {
+        if (limit == null || limit == 0) {
+            throw new userExceptionError400("The limit value must be greater than 0.");
+        }
         try {
             var userId = userService.findByLogin(jwtService.getLogin(token)).getId();
             return fileListMapper.toDtos(fileRepository.findFilesByUserWithLimit(userId, limit));
@@ -45,22 +49,23 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public File fileUpload(String token, String filename, MultipartFile file) {
+    public File fileUpload(String token, String filename, MultipartFile file, String hash) {
         var user = userService.findByLogin(jwtService.getLogin(token));
 
-        if (file.isEmpty()) {
+        if (file == null || file.isEmpty()) {
             throw new userExceptionError400("Error input data.");
         }
 
-        String hash;
         byte[] data;
-
         try {
-            hash = calcCheckSum(file);
             log.debug("Hash: {}", hash);
             data = file.getBytes();
-        } catch (NoSuchAlgorithmException | IOException e) {
+        } catch (IOException e) {
             throw new userExceptionError500(e.getMessage());
+        }
+
+        if (hash == null || hash.isEmpty()) {
+            hash = UUID.randomUUID().toString();
         }
 
         fileRepository.findByNameAndUserIdAndIsDeleted(filename, user.getId(), false).ifPresent(
@@ -125,24 +130,6 @@ public class FileServiceImpl implements FileService {
             sendFileError("Download", filename, false);
             return null;
         }
-    }
-
-    private String calcCheckSum(MultipartFile file) throws NoSuchAlgorithmException, IOException {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        var digestInputStream = new DigestInputStream(
-                new BufferedInputStream(
-                        file.getInputStream()
-                ),
-                md
-        );
-        while (digestInputStream.read() != -1) {
-            md = digestInputStream.getMessageDigest();
-        }
-        var checkSum = new StringBuilder();
-        for (byte b : md.digest()) {
-            checkSum.append(String.format("%02x", b));
-        }
-        return checkSum.toString();
     }
 
     private void sendFileError(String operation, String filename, boolean exists) {

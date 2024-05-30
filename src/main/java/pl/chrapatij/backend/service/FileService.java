@@ -8,9 +8,9 @@ import pl.chrapatij.backend.entity.File;
 import java.util.List;
 
 public interface FileService {
-    List<FileListDto> getFileList(String token, int limit) ;
+    List<FileListDto> getFileList(String token, Integer limit) ;
 
-    File fileUpload(String token, String filename, MultipartFile file);
+    File fileUpload(String token, String filename, MultipartFile file, String hash);
 
     File fileRename(String token, String oldFileName, String newFileName);
 
